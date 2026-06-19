@@ -353,11 +353,11 @@ body{font-family:'Hind Siliguri',sans-serif;background:var(--surface);color:var(
 <div id="admin-toast"></div>
 
 <script>
-const API = 'http://localhost:5000/api';
+const API = CONFIG?.API_BASE || 'https://targobd.onrender.com/api';
 const token = localStorage.getItem('targo_token');
 const user = JSON.parse(localStorage.getItem('targo_user') || '{}');
 
-if (!token || user.role !== 'admin') window.location.href = 'http://localhost:3000/pages/login.html';
+if (!token || user.role !== 'admin') window.location.href = '../pages/login.html';
 
 // Date
 document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('bn-BD', { weekday:'long', year:'numeric', month:'long', day:'numeric' });

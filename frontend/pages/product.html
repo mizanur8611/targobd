@@ -337,7 +337,7 @@
 
 <style>@keyframes spin{to{transform:rotate(360deg)}}@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}</style>
 <script>
-const API_BASE='http://localhost:5000/api';
+const API_BASE='https://targobd.onrender.com/api';
 const api={headers(){const t=localStorage.getItem('targo_token');return{'Content-Type':'application/json',...(t?{Authorization:`Bearer ${t}`}:{})};},async get(p){const r=await fetch(API_BASE+p,{headers:this.headers()});return r.json();},async post(p,b){const r=await fetch(API_BASE+p,{method:'POST',headers:this.headers(),body:JSON.stringify(b)});return r.json();},async put(p,b){const r=await fetch(API_BASE+p,{method:'PUT',headers:this.headers(),body:JSON.stringify(b)});return r.json();}};
 const Auth={getUser(){try{return JSON.parse(localStorage.getItem('targo_user'));}catch{return null;}},isLoggedIn(){return!!localStorage.getItem('targo_token');}};
 function doSearch(){const q=document.getElementById('search-input').value.trim();if(q)window.location.href=`products.html?search=${encodeURIComponent(q)}`;}

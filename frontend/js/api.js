@@ -1,5 +1,5 @@
 // TargoBD API Client — URL comes from config.js
-const API_BASE = (typeof CONFIG !== 'undefined' ? CONFIG.API_BASE : null) || 'http://localhost:5000/api';
+const API_BASE = (typeof CONFIG !== 'undefined' ? CONFIG.API_BASE : null) || 'https://targobd.onrender.com/api';
 
 const api = {
   base: API_BASE,

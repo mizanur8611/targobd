@@ -1,5 +1,5 @@
 // TargoBD — Shared Nav & Utilities
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://targobd.onrender.com/api';
 
 const api = {
   headers(){const t=localStorage.getItem('targo_token');return{'Content-Type':'application/json',...(t?{Authorization:`Bearer ${t}`}:{})};},

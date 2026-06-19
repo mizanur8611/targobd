@@ -173,7 +173,7 @@ function fp(n){return '৳ '+Number(n).toLocaleString();}
 function imgUrl(img){
   if(!img) return '';
   if(img.startsWith('http')) return img;
-  return (CONFIG?.API_BASE||'http://localhost:5000/api').replace('/api','')+img;
+  return (CONFIG?.API_BASE||'https://targobd.onrender.com/api').replace('/api','')+img;
 }
 
 function addCart(id,name,image,price){

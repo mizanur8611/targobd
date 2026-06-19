@@ -8,7 +8,7 @@
 const CONFIG = {
   // ─── API URL ───────────────────────────────────────────────
   // Local development:
-  API_BASE: 'http://localhost:5000/api',
+  API_BASE: 'https://targobd.onrender.com/api',
 
   // Production (আপনার server URL দিন):
   // API_BASE: 'https://api.targobd.com/api',

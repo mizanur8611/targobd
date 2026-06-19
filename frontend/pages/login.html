@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Login — TargoBD</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#F5F5F5;color:#0A0A0A;min-height:100vh;display:flex;flex-direction:column;}
+a{text-decoration:none;color:inherit;}
+.topbar{background:#0A0A0A;padding:7px 40px;display:flex;justify-content:space-between;align-items:center;}
+.topbar-left{color:rgba(255,255,255,.6);font-size:12px;}
+.topbar-left span{color:#FF6B00;font-weight:600;}
+.topbar-right{display:flex;gap:20px;}
+.topbar-right a{color:rgba(255,255,255,.6);font-size:12px;}
+nav{background:#fff;padding:0 40px;box-shadow:0 2px 12px rgba(0,0,0,.08);}
+.nav-main{display:flex;align-items:center;gap:24px;height:64px;}
+.logo{display:flex;align-items:center;gap:8px;}
+.logo-box{width:36px;height:36px;background:#FF6B00;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:17px;}
+.logo-txt{font-weight:800;font-size:20px;}
+.logo-txt span{color:#FF6B00;}
+.auth-page{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.auth-container{display:grid;grid-template-columns:1fr 1fr;max-width:900px;width:100%;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.12);}
+.auth-left{background:linear-gradient(135deg,#0A0A0A,#1a1a1a,#FF6B00 200%);padding:48px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
+.auth-left::before{content:'';position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:rgba(255,107,0,.15);}
+.auth-left::after{content:'';position:absolute;left:-40px;bottom:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,107,0,.1);}
+.auth-left-content{position:relative;z-index:1;}
+.auth-brand{font-size:28px;font-weight:900;color:#fff;margin-bottom:8px;}
+.auth-brand span{color:#FF6B00;}
+.auth-tagline{color:rgba(255,255,255,.6);font-size:14px;margin-bottom:32px;line-height:1.6;}
+.auth-feature{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.auth-feature-icon{width:36px;height:36px;background:rgba(255,107,0,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.auth-feature-text{color:rgba(255,255,255,.75);font-size:13px;font-weight:500;}
+.auth-right{padding:48px;}
+.auth-tabs{display:flex;gap:0;margin-bottom:28px;border-bottom:2px solid #F0F0F0;}
+.auth-tab{flex:1;padding:12px;text-align:center;font-size:14px;font-weight:700;cursor:pointer;color:#888;border-bottom:2px solid transparent;margin-bottom:-2px;transition:.2s;}
+.auth-tab.active{color:#FF6B00;border-bottom-color:#FF6B00;}
+.auth-form{display:none;}
+.auth-form.active{display:block;}
+.form-group{margin-bottom:16px;}
+.form-group label{font-size:11px;font-weight:700;color:#777;margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.4px;}
+.input-wrap{position:relative;}
+.form-control{width:100%;padding:12px 14px;border:2px solid #E8E8E8;border-radius:10px;font-size:14px;outline:none;transition:.2s;font-family:'Inter',sans-serif;}
+.form-control:focus{border-color:#FF6B00;box-shadow:0 0 0 3px rgba(255,107,0,.08);}
+.toggle-pw{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:#888;}
+.submit-btn{width:100%;background:linear-gradient(135deg,#FF6B00,#ff9500);color:#fff;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;transition:.2s;font-family:'Inter',sans-serif;margin-top:4px;}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,107,0,.35);}
+.submit-btn:disabled{opacity:.7;cursor:not-allowed;transform:none;}
+.msg{padding:12px 16px;border-radius:9px;font-size:13px;font-weight:600;margin-bottom:16px;display:none;}
+.msg.error{background:#FFF5F5;border:1.5px solid #E53935;color:#AA0000;}
+.msg.success{background:#E8FFF5;border:1.5px solid #00C853;color:#006644;}
+.forgot-link{font-size:12px;color:#FF6B00;font-weight:600;float:right;cursor:pointer;}
+.forgot-link:hover{text-decoration:underline;}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#E8E8E8;}
+.divider span{font-size:12px;color:#888;white-space:nowrap;}
+.switch-text{text-align:center;font-size:13px;color:#888;margin-top:16px;}
+.switch-text a{color:#FF6B00;font-weight:700;cursor:pointer;}
+.strength-bar{height:4px;border-radius:99px;background:#E8E8E8;margin-top:6px;overflow:hidden;}
+.strength-fill{height:100%;border-radius:99px;transition:.3s;width:0;}
+@media(max-width:700px){.auth-container{grid-template-columns:1fr;}.auth-left{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">🇧🇩 Bangladesh's Smart Marketplace | <span>Free Delivery on orders ৳999+</span></div>
+  <div class="topbar-right"><a href="#">Help</a><a href="track.html">Track Order</a></div>
+</div>
+<nav>
+  <div class="nav-main">
+    <a href="../index.html" class="logo"><div class="logo-box">T</div><div class="logo-txt">Targo<span>BD</span></div></a>
+    <div style="margin-left:auto;font-size:13px;color:#888">Already have an account? <a href="login.html" style="color:#FF6B00;font-weight:700">Login →</a></div>
+  </div>
+</nav>
+
+<div class="auth-page">
+  <div class="auth-container">
+    <!-- LEFT SIDE -->
+    <div class="auth-left">
+      <div class="auth-left-content">
+        <div class="auth-brand">Targo<span>BD</span></div>
+        <div class="auth-tagline">Bangladesh's smartest marketplace for gadgets, fashion & lifestyle products.</div>
+        <div class="auth-feature"><div class="auth-feature-icon">🚚</div><div class="auth-feature-text">Fast delivery across Bangladesh</div></div>
+        <div class="auth-feature"><div class="auth-feature-icon">💵</div><div class="auth-feature-text">Cash on Delivery available</div></div>
+        <div class="auth-feature"><div class="auth-feature-icon">↩️</div><div class="auth-feature-text">Easy 7-day returns</div></div>
+        <div class="auth-feature"><div class="auth-feature-icon">🔒</div><div class="auth-feature-text">100% secure payments</div></div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="auth-right">
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">Login</div>
+        <div class="auth-tab" id="tab-register" onclick="switchTab('register')">Register</div>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div class="auth-form active" id="form-login">
+        <div style="font-size:22px;font-weight:800;margin-bottom:6px;">Welcome back! 👋</div>
+        <div style="font-size:13px;color:#888;margin-bottom:24px;">Login to your TargoBD account</div>
+        <div id="login-msg" class="msg"></div>
+        <div class="form-group">
+          <label>Email or Mobile *</label>
+          <input class="form-control" id="l-email" type="text" placeholder="email@example.com or 01XXXXXXXXX" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label>Password * <span class="forgot-link" onclick="showForgot()">Forgot password?</span></label>
+          <div class="input-wrap">
+            <input class="form-control" id="l-pass" type="password" placeholder="Enter your password" autocomplete="current-password">
+            <span class="toggle-pw" onclick="togglePw('l-pass',this)">👁️</span>
+          </div>
+        </div>
+        <button class="submit-btn" id="login-btn" onclick="doLogin()">Login to TargoBD →</button>
+        <div class="switch-text">Don't have an account? <a onclick="switchTab('register')">Create one free</a></div>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div class="auth-form" id="form-register">
+        <div style="font-size:22px;font-weight:800;margin-bottom:6px;">Create Account 🎉</div>
+        <div style="font-size:13px;color:#888;margin-bottom:24px;">Join thousands of happy TargoBD customers</div>
+        <div id="reg-msg" class="msg"></div>
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input class="form-control" id="r-name" type="text" placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label>Mobile or Email *</label>
+          <input class="form-control" id="r-email" type="text" placeholder="01XXXXXXXXX or email@example.com" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label>Password *</label>
+          <div class="input-wrap">
+            <input class="form-control" id="r-pass" type="password" placeholder="At least 6 characters" oninput="checkStrength(this.value)" autocomplete="new-password">
+            <span class="toggle-pw" onclick="togglePw('r-pass',this)">👁️</span>
+          </div>
+          <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+          <div style="font-size:10px;margin-top:3px;font-weight:600;color:#888" id="strength-label"></div>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password *</label>
+          <div class="input-wrap">
+            <input class="form-control" id="r-pass2" type="password" placeholder="Re-enter password" autocomplete="new-password">
+            <span class="toggle-pw" onclick="togglePw('r-pass2',this)">👁️</span>
+          </div>
+        </div>
+        <button class="submit-btn" id="reg-btn" onclick="doRegister()">Create My Account →</button>
+        <div style="font-size:11px;color:#aaa;text-align:center;margin-top:12px;">By registering, you agree to our Terms & Privacy Policy</div>
+        <div class="switch-text">Already have an account? <a onclick="switchTab('login')">Login here</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE='http://localhost:5000/api';
+const redirect=new URLSearchParams(window.location.search).get('redirect')||'../index.html';
+if(localStorage.getItem('targo_token'))window.location.href=redirect;
+if(new URLSearchParams(window.location.search).get('tab')==='register')switchTab('register');
+
+function switchTab(tab){
+  document.getElementById('tab-login').classList.toggle('active',tab==='login');
+  document.getElementById('tab-register').classList.toggle('active',tab==='register');
+  document.getElementById('form-login').classList.toggle('active',tab==='login');
+  document.getElementById('form-register').classList.toggle('active',tab==='register');
+  document.getElementById('login-msg').style.display='none';
+  document.getElementById('reg-msg').style.display='none';
+}
+function showMsg(id,msg,type){const el=document.getElementById(id);el.textContent=(type==='error'?'❌ ':'✅ ')+msg;el.className='msg '+type;el.style.display='block';}
+function togglePw(id,icon){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';icon.textContent=el.type==='password'?'👁️':'🙈';}
+function showForgot(){showMsg('login-msg','Password reset coming soon. Contact support.','error');}
+function checkStrength(val){
+  let s=0;if(val.length>=8)s++;if(/[A-Z]/.test(val))s++;if(/[0-9]/.test(val))s++;if(/[^A-Za-z0-9]/.test(val))s++;
+  const lvls=[{p:'25%',c:'#E53935',l:'Weak'},{p:'50%',c:'#FF6B00',l:'Fair'},{p:'75%',c:'#FFB800',l:'Good'},{p:'100%',c:'#00C853',l:'Strong'}];
+  const lvl=val?lvls[Math.min(s-1,3)]:null;
+  document.getElementById('strength-fill').style.cssText=`width:${val?lvl.p:'0%'};background:${lvl?.c||''}`;
+  document.getElementById('strength-label').textContent=val?`Strength: ${lvl.l}`:'';
+  document.getElementById('strength-label').style.color=lvl?.c||'';
+}
+
+['l-email','l-pass'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();}));
+['r-name','r-email','r-pass','r-pass2'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();}));
+
+async function doLogin(){
+  const emailOrPhone=document.getElementById('l-email').value.trim();
+  const password=document.getElementById('l-pass').value;
+  if(!emailOrPhone||!password)return showMsg('login-msg','Please fill all fields','error');
+  const btn=document.getElementById('login-btn');
+  btn.textContent='Logging in...';btn.disabled=true;
+  document.getElementById('login-msg').style.display='none';
+  const data=await fetch(API_BASE+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({emailOrPhone,password})}).then(r=>r.json()).catch(()=>({success:false,message:'Network error'}));
+  if(data.success){
+    localStorage.setItem('targo_token',data.token);
+    localStorage.setItem('targo_user',JSON.stringify(data.user));
+    showMsg('login-msg','Login successful! Redirecting...','success');
+    setTimeout(()=>window.location.href=data.user.role==='admin'?'/admin/index.html':redirect,800);
+  } else{showMsg('login-msg',data.message||'Login failed','error');btn.textContent='Login to TargoBD →';btn.disabled=false;}
+}
+
+async function doRegister(){
+  const name=document.getElementById('r-name').value.trim();
+  const emailOrPhone=document.getElementById('r-email').value.trim();
+  const pass=document.getElementById('r-pass').value;
+  const pass2=document.getElementById('r-pass2').value;
+  if(!name||!emailOrPhone||!pass)return showMsg('reg-msg','Please fill all fields','error');
+  if(pass.length<6)return showMsg('reg-msg','Password must be at least 6 characters','error');
+  if(pass!==pass2)return showMsg('reg-msg','Passwords do not match','error');
+  const btn=document.getElementById('reg-btn');
+  btn.textContent='Creating account...';btn.disabled=true;
+  document.getElementById('reg-msg').style.display='none';
+  const isPhone=/^01/.test(emailOrPhone);
+  const body={name,password:pass,...(isPhone?{phone:emailOrPhone}:{email:emailOrPhone})};
+  const data=await fetch(API_BASE+'/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).then(r=>r.json()).catch(()=>({success:false,message:'Network error'}));
+  if(data.success){
+    localStorage.setItem('targo_token',data.token);
+    localStorage.setItem('targo_user',JSON.stringify(data.user));
+    showMsg('reg-msg','Account created! Welcome to TargoBD!','success');
+    setTimeout(()=>window.location.href=redirect,1000);
+  } else{showMsg('reg-msg',data.message||'Registration failed','error');btn.textContent='Create My Account →';btn.disabled=false;}
+}
+</script>
+</body>
+</html>

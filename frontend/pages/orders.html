@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>My Orders — TargoBD</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+.page-wrap{padding:0 40px 40px;}
+.order-filter-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.otab{padding:8px 20px;border-radius:99px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E8E8E8;background:#fff;transition:.2s;color:#888;}
+.otab:hover{border-color:#FF6B00;color:#FF6B00;}
+.otab.active{background:#FF6B00;border-color:#FF6B00;color:#fff;}
+.order-card{background:#fff;border-radius:14px;border:1px solid #E8E8E8;margin-bottom:16px;overflow:hidden;transition:.2s;}
+.order-card:hover{border-color:#FF6B00;box-shadow:0 4px 20px rgba(255,107,0,.1);}
+.order-card-head{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #F5F5F5;flex-wrap:wrap;gap:10px;}
+.order-num{font-size:15px;font-weight:800;color:#FF6B00;}
+.order-date{font-size:12px;color:#888;margin-top:2px;}
+.order-status{padding:5px 14px;border-radius:99px;font-size:11px;font-weight:700;}
+.st-pending{background:#FFF8E8;color:#9A5800;}
+.st-confirmed{background:#E8F4FF;color:#0066BB;}
+.st-processing{background:#F0E8FF;color:#6600BB;}
+.st-shipped{background:#E8F0FF;color:#004499;}
+.st-delivered{background:#E8FFF5;color:#006644;}
+.st-cancelled{background:#FFF5F5;color:#AA0000;}
+.order-items{padding:16px 20px;}
+.order-item{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid #F9F9F9;}
+.order-item:last-child{border-bottom:none;}
+.order-item-img{width:56px;height:56px;border-radius:10px;object-fit:cover;background:#F5F5F5;border:1px solid #E8E8E8;flex-shrink:0;}
+.order-item-name{flex:1;font-size:13px;font-weight:600;color:#0A0A0A;line-height:1.4;}
+.order-item-meta{font-size:11px;color:#888;margin-top:2px;}
+.order-item-price{font-size:14px;font-weight:800;color:#FF6B00;white-space:nowrap;}
+.order-card-foot{padding:14px 20px;background:#F9F9F9;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.order-total{font-size:15px;font-weight:800;}
+.order-actions{display:flex;gap:8px;}
+.ord-btn{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:.2s;font-family:'Inter',sans-serif;}
+.ord-btn-primary{background:#FF6B00;color:#fff;}
+.ord-btn-primary:hover{background:#e05a00;}
+.ord-btn-outline{background:#fff;color:#555;border:1.5px solid #E8E8E8;}
+.ord-btn-outline:hover{border-color:#FF6B00;color:#FF6B00;}
+@media(max-width:900px){.page-wrap{padding:0 16px 30px;}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">🇧🇩 Bangladesh's Smart Marketplace | <span>Free Delivery on orders ৳999+</span></div>
+  <div class="topbar-right"><a href="#">Sell on TargoBD</a><a href="track.html">Track Order</a></div>
+</div>
+<nav>
+  <div class="nav-main">
+    <a href="../index.html" class="logo"><div class="logo-box">T</div><div class="logo-txt">Targo<span>BD</span></div></a>
+    <div class="search-bar"><select id="search-cat"><option value="">All</option></select><input id="search-input" type="text" placeholder="Search products..."><button onclick="doSearch()">🔍</button></div>
+    <div class="nav-icons">
+      <a href="account.html" class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg><span id="nav-user-label">Account</span></a>
+      <a href="wishlist.html" class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg><span>Wishlist</span></a>
+      <a href="cart.html" class="nav-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg><span>Cart</span><div class="nav-badge" id="cart-badge" style="display:none">0</div></a>
+    </div>
+  </div>
+  <div class="nav-sub" id="main-nav"><a href="../index.html">🏠 Home</a><a href="products.html?flash=true">🔥 Flash Sale</a><a href="products.html">🛍️ All Products</a></div>
+</nav>
+<div class="breadcrumb"><a href="../index.html">Home</a><span class="breadcrumb-sep">›</span><a href="account.html">Account</a><span class="breadcrumb-sep">›</span><span class="breadcrumb-current">My Orders</span></div>
+
+<div class="page-wrap">
+  <div style="display:grid;grid-template-columns:240px 1fr;gap:24px;margin-top:20px;">
+    <!-- SIDEBAR -->
+    <aside style="height:fit-content;position:sticky;top:80px;">
+      <div style="background:linear-gradient(135deg,#0A0A0A,#1a1a1a);border-radius:16px;padding:24px;text-align:center;margin-bottom:12px;">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#FF6B00,#ff9500);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;margin:0 auto 10px;" id="av-letter">?</div>
+        <div style="color:#fff;font-size:15px;font-weight:700;" id="av-name">Loading...</div>
+        <div style="color:rgba(255,255,255,.5);font-size:11px;" id="av-email"></div>
+      </div>
+      <div style="background:#fff;border-radius:14px;overflow:hidden;border:1px solid #E8E8E8;">
+        <a href="account.html" style="display:flex;align-items:center;gap:12px;padding:12px 18px;font-size:13px;font-weight:500;color:#444;border-bottom:1px solid #F5F5F5;text-decoration:none;transition:.15s;">👤 My Profile</a>
+        <a href="orders.html" style="display:flex;align-items:center;gap:12px;padding:12px 18px;font-size:13px;font-weight:700;color:#FF6B00;border-bottom:1px solid #F5F5F5;text-decoration:none;background:#FFF5EE;border-left:3px solid #FF6B00;">📦 My Orders</a>
+        <a href="wishlist.html" style="display:flex;align-items:center;gap:12px;padding:12px 18px;font-size:13px;font-weight:500;color:#444;border-bottom:1px solid #F5F5F5;text-decoration:none;">❤️ Wishlist</a>
+        <a href="track.html" style="display:flex;align-items:center;gap:12px;padding:12px 18px;font-size:13px;font-weight:500;color:#444;border-bottom:1px solid #F5F5F5;text-decoration:none;">🔍 Track Order</a>
+        <div onclick="doLogout()" style="display:flex;align-items:center;gap:12px;padding:12px 18px;font-size:13px;font-weight:500;color:#E53935;cursor:pointer;">🚪 Logout</div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+        <h1 style="font-size:22px;font-weight:800;">📦 My Orders</h1>
+        <a href="track.html" style="font-size:13px;color:#FF6B00;font-weight:600;">🔍 Track Order →</a>
+      </div>
+
+      <div class="order-filter-tabs">
+        <div class="otab active" onclick="filterOrders('all',this)">All Orders</div>
+        <div class="otab" onclick="filterOrders('pending',this)">⏳ Pending</div>
+        <div class="otab" onclick="filterOrders('confirmed',this)">✅ Confirmed</div>
+        <div class="otab" onclick="filterOrders('shipped',this)">🚚 Shipped</div>
+        <div class="otab" onclick="filterOrders('delivered',this)">🏠 Delivered</div>
+        <div class="otab" onclick="filterOrders('cancelled',this)">❌ Cancelled</div>
+      </div>
+
+      <div id="orders-loading" style="text-align:center;padding:60px"><div style="display:inline-block;width:44px;height:44px;border:4px solid #eee;border-top-color:#FF6B00;border-radius:50%;animation:spin .7s linear infinite"></div></div>
+      <div id="orders-empty" style="display:none;text-align:center;padding:60px 20px"><div style="font-size:56px;margin-bottom:14px">📦</div><div style="font-size:20px;font-weight:800;margin-bottom:8px">No orders found</div><div style="font-size:13px;color:#888;margin-bottom:24px">Start shopping to see your orders here</div><a href="products.html" style="display:inline-block;background:#FF6B00;color:#fff;padding:12px 28px;border-radius:10px;font-weight:700;font-size:14px">🛍️ Start Shopping</a></div>
+      <div id="orders-list"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><h3>Targo<span>BD</span></h3><p>Bangladesh's smartest marketplace.</p></div>
+    <div class="footer-col"><h4>Quick Links</h4><a href="../index.html">Home</a><a href="products.html">Products</a></div>
+    <div class="footer-col"><h4>Help</h4><a href="#">FAQ</a><a href="#">Returns</a></div>
+    <div class="footer-col"><h4>Sell</h4><a href="#">Become a Seller</a></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 TargoBD. All rights reserved. 🇧🇩</p><div class="payment-icons"><div class="payment-icon bkash">bKash</div><div class="payment-icon nagad">Nagad</div><div class="payment-icon">VISA</div><div class="payment-icon">COD</div></div></div>
+</footer>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<script>
+const API_BASE='http://localhost:5000/api';
+const api={headers(){const t=localStorage.getItem('targo_token');return{'Content-Type':'application/json',...(t?{Authorization:`Bearer ${t}`}:{})};},async get(p){const r=await fetch(API_BASE+p,{headers:this.headers()});return r.json();}};
+const Auth={getUser(){try{return JSON.parse(localStorage.getItem('targo_user'));}catch{return null;}},isLoggedIn(){return!!localStorage.getItem('targo_token');}};
+if(!Auth.isLoggedIn())window.location.href='login.html';
+function doLogout(){localStorage.removeItem('targo_token');localStorage.removeItem('targo_user');window.location.href='login.html';}
+function doSearch(){const q=document.getElementById('search-input').value.trim();if(q)window.location.href=`products.html?search=${encodeURIComponent(q)}`;}
+document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+api.get('/categories').then(d=>{const nav=document.getElementById('main-nav');const sel=document.getElementById('search-cat');(d.categories||[]).forEach(c=>{nav.innerHTML+=`<a href="products.html?category=${c._id}">${c.icon} ${c.name}</a>`;sel.innerHTML+=`<option value="${c._id}">${c.name}</option>`;});});
+const cart=JSON.parse(localStorage.getItem('targo_cart')||'[]');const cb=document.getElementById('cart-badge');if(cb){const c=cart.reduce((s,i)=>s+i.quantity,0);cb.textContent=c;cb.style.display=c?'flex':'none';}
+const u=Auth.getUser();
+if(u){document.getElementById('av-letter').textContent=u.name?.charAt(0)||'?';document.getElementById('av-name').textContent=u.name||'';document.getElementById('av-email').textContent=u.email||u.phone||'';document.getElementById('nav-user-label').textContent=u.name?.split(' ')[0]||'Account';}
+
+function fp(n){return '৳ '+Number(n).toLocaleString();}
+function imgUrl(img){if(!img)return'';if(img.startsWith('http'))return img;return API_BASE.replace('/api','')+img;}
+const STATUS_LABELS={pending:'⏳ Pending',confirmed:'✅ Confirmed',processing:'📦 Processing',shipped:'🚚 Shipped',delivered:'🏠 Delivered',cancelled:'❌ Cancelled',returned:'↩️ Returned'};
+const STATUS_CLS={pending:'st-pending',confirmed:'st-confirmed',processing:'st-processing',shipped:'st-shipped',delivered:'st-delivered',cancelled:'st-cancelled',returned:'st-cancelled'};
+
+let allOrders=[];
+
+async function loadOrders(){
+  const data=await api.get('/orders/my');
+  document.getElementById('orders-loading').style.display='none';
+  if(!data.success||!data.orders?.length){document.getElementById('orders-empty').style.display='';return;}
+  allOrders=data.orders;
+  renderOrders(allOrders);
+}
+
+function renderOrders(orders){
+  const list=document.getElementById('orders-list');
+  if(!orders.length){list.innerHTML='<div style="text-align:center;padding:40px;color:#888">No orders in this category</div>';return;}
+  list.innerHTML=orders.map(o=>`
+    <div class="order-card">
+      <div class="order-card-head">
+        <div><div class="order-num">#${o.orderNumber}</div><div class="order-date">${new Date(o.createdAt).toLocaleDateString('en-BD',{year:'numeric',month:'long',day:'numeric'})}</div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="order-status ${STATUS_CLS[o.status]||'st-pending'}">${STATUS_LABELS[o.status]||o.status}</span>
+          <span style="font-size:11px;color:#888">${o.paymentMethod}</span>
+        </div>
+      </div>
+      <div class="order-items">
+        ${o.items.map(item=>`
+          <div class="order-item">
+            <img class="order-item-img" src="${imgUrl(item.image)}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/56x56/f5f5f5/888?text=📦'">
+            <div class="order-item-name">${item.name}<div class="order-item-meta">${item.color?`Color: ${item.color}`:''}${item.size?` | Size: ${item.size}`:''} | Qty: ${item.quantity}</div></div>
+            <div class="order-item-price">${fp(item.price*item.quantity)}</div>
+          </div>`).join('')}
+      </div>
+      <div class="order-card-foot">
+        <div><div class="order-total">Total: ${fp(o.total)}</div><div style="font-size:11px;color:#888;margin-top:2px">${o.shippingAddress.district}, ${o.shippingAddress.division}</div></div>
+        <div class="order-actions">
+          <a href="track.html?order=${o.orderNumber}" class="ord-btn ord-btn-primary">📍 Track</a>
+          ${o.status==='delivered'?`<button class="ord-btn ord-btn-outline" onclick="reorder('${o._id}')">🔁 Reorder</button>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filterOrders(status,el){
+  document.querySelectorAll('.otab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const filtered=status==='all'?allOrders:allOrders.filter(o=>o.status===status);
+  renderOrders(filtered);
+}
+
+function reorder(orderId){
+  const order=allOrders.find(o=>o._id===orderId);
+  if(!order)return;
+  let cart=JSON.parse(localStorage.getItem('targo_cart')||'[]');
+  order.items.forEach(item=>{
+    const ex=cart.find(i=>i.product===item.product);
+    if(ex)ex.quantity+=item.quantity;
+    else cart.push({product:item.product,name:item.name,image:item.image,price:item.price,quantity:item.quantity});
+  });
+  localStorage.setItem('targo_cart',JSON.stringify(cart));
+  window.location.href='cart.html';
+}
+
+document.addEventListener('DOMContentLoaded',loadOrders);
+</script>
+</body>
+</html>

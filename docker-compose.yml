@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # MongoDB
+  mongo:
+    image: mongo:7
+    container_name: targobd-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: targobd
+
+  # Backend API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: targobd-api
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/targobd
+      JWT_SECRET: ${JWT_SECRET:-targobd_super_secret_change_this}
+      PORT: 5000
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+      EMAIL_USER: ${EMAIL_USER:-}
+      EMAIL_PASS: ${EMAIL_PASS:-}
+    volumes:
+      - uploads_data:/app/uploads
+
+  # Frontend (Nginx)
+  frontend:
+    image: nginx:alpine
+    container_name: targobd-frontend
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html/
+      - ./admin:/usr/share/nginx/html/admin/
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - api
+
+volumes:
+  mongo_data:
+  uploads_data:

@@ -346,23 +346,23 @@ async function loadPage() {
   // Sidebar
   const sidebar = document.getElementById('sidebar-cats');
   cats.forEach(c => {
-    sidebar.innerHTML += `<a href="pages/products.html?category=${c._id}" class="cat-item"><span class="cat-icon">${c.icon}</span><span class="cat-name">${c.name}</span><span class="cat-arr">›</span></a>`;
+    sidebar.innerHTML += `<a href="pages/products.html?category=${c._id}" class="cat-item"><span class="cat-icon">${c.icon}</span><span class="cat-name">${c.nameEn || c.name}</span><span class="cat-arr">›</span></a>`;
   });
 
   // Nav sub
   const nav = document.getElementById('main-nav');
   cats.forEach(c => {
-    nav.innerHTML += `<a href="pages/products.html?category=${c._id}">${c.icon} ${c.name}</a>`;
+    nav.innerHTML += `<a href="pages/products.html?category=${c._id}">${c.icon} ${c.nameEn || c.name}</a>`;
   });
 
   // Search select
   const sel = document.getElementById('search-cat');
-  cats.forEach(c => { sel.innerHTML += `<option value="${c._id}">${c.name}</option>`; });
+  cats.forEach(c => { sel.innerHTML += `<option value="${c._id}">${c.nameEn || c.name}</option>`; });
 
   // Category boxes
   const grid = document.getElementById('cat-grid');
   cats.forEach(c => {
-    grid.innerHTML += `<a href="pages/products.html?category=${c._id}" class="cat-box"><div class="cat-box-icon">${c.icon}</div><div class="cat-box-name">${c.name}</div></a>`;
+    grid.innerHTML += `<a href="pages/products.html?category=${c._id}" class="cat-box"><div class="cat-box-icon">${c.icon}</div><div class="cat-box-name">${c.nameEn || c.name}</div></a>`;
   });
 
   // Flash sale

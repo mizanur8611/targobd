@@ -147,7 +147,8 @@ body{font-family:'Hind Siliguri',sans-serif;background:var(--surface);color:var(
     </nav>
     <div class="sidebar-bottom">
       <div class="admin-badge">👑 Admin Account</div>
-      <button onclick="adminLogout()" class="btn btn-outline" style="width:100%;margin-top:10px;color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.15)">🚪 লগআউট</button>
+      <button onclick="openModal('change-password-modal')" class="btn btn-outline" style="width:100%;margin-top:10px;color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.15)">🔑 পাসওয়ার্ড পরিবর্তন</button>
+      <button onclick="adminLogout()" class="btn btn-outline" style="width:100%;margin-top:8px;color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.15)">🚪 লগআউট</button>
     </div>
   </aside>
 
@@ -347,6 +348,27 @@ body{font-family:'Hind Siliguri',sans-serif;background:var(--surface);color:var(
       <button class="btn btn-primary" onclick="saveProduct()" style="flex:1">পণ্য সংরক্ষণ করুন</button>
       <button class="btn btn-outline" onclick="closeModal('product-modal')">বাতিল</button>
     </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="change-password-modal">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" onclick="closeModal('change-password-modal')">×</button>
+    <div class="modal-title">🔑 পাসওয়ার্ড পরিবর্তন</div>
+    <div class="form-group">
+      <label class="form-label">বর্তমান পাসওয়ার্ড *</label>
+      <input class="form-control" id="cp-current" placeholder="বর্তমান পাসওয়ার্ড" type="password">
+    </div>
+    <div class="form-group">
+      <label class="form-label">নতুন পাসওয়ার্ড *</label>
+      <input class="form-control" id="cp-new" placeholder="কমপক্ষে ৬ ক্যারেক্টার" type="password">
+    </div>
+    <div class="form-group">
+      <label class="form-label">নতুন পাসওয়ার্ড নিশ্চিত করুন *</label>
+      <input class="form-control" id="cp-confirm" placeholder="নতুন পাসওয়ার্ড আবার লিখুন" type="password">
+    </div>
+    <button class="btn btn-primary" onclick="changeAdminPassword()" style="width:100%">পাসওয়ার্ড পরিবর্তন করুন</button>
   </div>
 </div>
 
@@ -665,7 +687,35 @@ async function toggleReview(id, isApproved) {
   if (data.success) { toast('✅ আপডেট হয়েছে'); loadReviews(); }
 }
 
-function adminLogout() { localStorage.removeItem('targo_token'); localStorage.removeItem('targo_user'); window.location.href='http://localhost:3000/pages/login.html'; }
+// ─── CHANGE PASSWORD ─────────────────────────────────────────────────────────
+async function changeAdminPassword() {
+  const currentPassword = document.getElementById('cp-current').value;
+  const newPassword = document.getElementById('cp-new').value;
+  const confirmPassword = document.getElementById('cp-confirm').value;
+
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    return toast('সব ফিল্ড পূরণ করুন', 'error');
+  }
+  if (newPassword.length < 6) {
+    return toast('নতুন পাসওয়ার্ড কমপক্ষে ৬ ক্যারেক্টার হতে হবে', 'error');
+  }
+  if (newPassword !== confirmPassword) {
+    return toast('নতুন পাসওয়ার্ড দুটি মিলেনি', 'error');
+  }
+
+  const data = await apiFetch('/auth/change-password', 'PUT', { currentPassword, newPassword });
+  if (data.success) {
+    toast('✅ পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে');
+    closeModal('change-password-modal');
+    document.getElementById('cp-current').value = '';
+    document.getElementById('cp-new').value = '';
+    document.getElementById('cp-confirm').value = '';
+  } else {
+    toast(data.message || 'পাসওয়ার্ড পরিবর্তন ব্যর্থ হয়েছে', 'error');
+  }
+}
+
+function adminLogout() { localStorage.removeItem('targo_token'); localStorage.removeItem('targo_user'); window.location.href='../pages/login.html'; }
 
 // Init
 loadDashboard();

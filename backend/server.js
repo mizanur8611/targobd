@@ -10,10 +10,34 @@ const app = express();
 
 // ─── Security Middleware ───────────────────────────────────────────────────────
 app.use(helmet({ contentSecurityPolicy: false }));
+
+// Allow multiple frontend origins (custom domain + www + vercel.app fallback)
+// You can add more origins here later, or set them via FRONTEND_URL as a
+// comma-separated list in your .env, e.g.:
+//   FRONTEND_URL=https://targobd.com,https://www.targobd.com,https://targobd.vercel.app
+const defaultOrigins = [
+  'https://targobd.com',
+  'https://www.targobd.com',
+  'https://targobd.vercel.app'
+];
+
+const envOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map(o => o.trim())
+  : [];
+
+const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
+  origin(origin, callback) {
+    // Allow requests with no origin (e.g. server-to-server, curl, Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    console.warn(`⚠️  CORS blocked request from origin: ${origin}`);
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 

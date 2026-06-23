@@ -65,14 +65,13 @@
   </div>
 
   <!-- Main Banner -->
-  <div class="main-banner" onclick="location.href='pages/products.html?flash=true'">
+  <div class="main-banner" id="main-banner" onclick="bannerClick()">
     <div class="banner-content">
       <div class="banner-badge" id="banner-badge">🔥 MEGA SALE IS LIVE</div>
       <h1 id="banner-title">Smart Deals.<br><span>Smart Life.</span></h1>
-      <p id="banner-sub">Bangladesh's most trusted marketplace for gadgets, fashion & lifestyle.</p>
-      <a href="pages/products.html?flash=true" class="banner-btn" id="banner-cta">Shop Now →</a>
+      <p id="banner-sub">Bangladesh's most trusted marketplace.</p>
+      <a href="pages/products.html?flash=true" class="banner-btn" id="banner-cta" onclick="event.stopPropagation()">Shop Now →</a>
     </div>
-    <div class="banner-art" id="banner-art">🛒</div>
     <div class="banner-dots" id="banner-dots"></div>
   </div>
 
@@ -221,32 +220,80 @@
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
 <script>
-// ─── BANNER SLIDER ──────────────────────────────────────────────
-const slides = [
-  { badge:'🔥 MEGA SALE IS LIVE', title:'Smart Deals.<br><span>Smart Life.</span>', sub:"Bangladesh's most trusted marketplace.", art:'🛒', link:'pages/products.html?flash=true' },
-  { badge:'💻 TECH OFFERS', title:'Top Gadgets.<br><span>Best Prices.</span>', sub:'Latest smartphones, laptops & accessories.', art:'📱', link:'pages/products.html?search=gadgets' },
-  { badge:'👗 FASHION WEEK', title:'Style Up.<br><span>Pay Less.</span>', sub:'Premium fashion brands at Bangladesh prices.', art:'👗', link:'pages/products.html?search=fashion' }
-];
+// ─── BANNER SLIDER (now dynamic — loaded from /api/banners) ──────────────
+let slides = [];
 let slide = 0;
-const dotsEl = document.getElementById('banner-dots');
-slides.forEach((_,i) => {
-  const d = document.createElement('div');
-  d.className = 'dot' + (i===0?' active':'');
-  d.onclick = () => setSlide(i);
-  dotsEl.appendChild(d);
-});
+let bannerInterval = null;
+
+// Fallback used only if the API returns zero banners (so the homepage never looks broken)
+const fallbackSlides = [{
+  badge: '🔥 MEGA SALE IS LIVE',
+  title: 'Smart Deals.<br><span>Smart Life.</span>',
+  sub: "Bangladesh's most trusted marketplace.",
+  image: '',
+  buttonText: 'Shop Now →',
+  link: 'pages/products.html?flash=true'
+}];
+
+async function loadBanners() {
+  const data = await api.get('/banners');
+  const banners = data.banners || [];
+
+  slides = banners.length ? banners.map(b => ({
+    badge: b.badge || '',
+    title: b.title || '',
+    sub: b.subtitle || '',
+    image: b.image || '',
+    buttonText: b.buttonText || 'Shop Now →',
+    link: (b.link || 'pages/products.html').replace(/^\//, '')
+  })) : fallbackSlides;
+
+  const dotsEl = document.getElementById('banner-dots');
+  dotsEl.innerHTML = '';
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = (e) => { e.stopPropagation(); setSlide(i); };
+    dotsEl.appendChild(d);
+  });
+
+  setSlide(0);
+
+  clearInterval(bannerInterval);
+  if (slides.length > 1) {
+    bannerInterval = setInterval(() => setSlide((slide + 1) % slides.length), 4000);
+  }
+}
+
 function setSlide(i) {
-  document.querySelectorAll('.dot')[slide].classList.remove('active');
+  const dots = document.querySelectorAll('.dot');
+  if (dots[slide]) dots[slide].classList.remove('active');
   slide = i;
   const s = slides[i];
+  const bannerEl = document.getElementById('main-banner');
+
   document.getElementById('banner-badge').textContent = s.badge;
+  document.getElementById('banner-badge').style.display = s.badge ? 'inline-block' : 'none';
   document.getElementById('banner-title').innerHTML = s.title;
   document.getElementById('banner-sub').textContent = s.sub;
-  document.getElementById('banner-art').textContent = s.art;
+  document.getElementById('banner-cta').textContent = s.buttonText;
   document.getElementById('banner-cta').href = s.link;
-  document.querySelectorAll('.dot')[i].classList.add('active');
+
+  if (s.image) {
+    bannerEl.style.backgroundImage = `linear-gradient(90deg, rgba(10,10,10,.88) 0%, rgba(10,10,10,.55) 45%, rgba(10,10,10,.15) 100%), url('${s.image}')`;
+    bannerEl.style.backgroundSize = 'cover';
+    bannerEl.style.backgroundPosition = 'center';
+  } else {
+    bannerEl.style.backgroundImage = '';
+  }
+
+  if (dots[i]) dots[i].classList.add('active');
 }
-setInterval(() => setSlide((slide+1) % slides.length), 4000);
+
+function bannerClick() {
+  const s = slides[slide];
+  if (s?.link) window.location.href = s.link;
+}
 
 // ─── TIMER ──────────────────────────────────────────────────────
 let sec = 5*3600 + 42*60 + 18;
@@ -404,7 +451,10 @@ function doSearch() {
 }
 document.getElementById('search-input').addEventListener('keydown', e => { if(e.key==='Enter') doSearch(); });
 
-document.addEventListener('DOMContentLoaded', loadPage);
+document.addEventListener('DOMContentLoaded', () => {
+  loadBanners();
+  loadPage();
+});
 </script>
 </body>
 </html>
